@@ -27,6 +27,10 @@ app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
+app.get('/', (req, res) => {
+    res.send('Selamat Datang Brok!!')
+})
+
 app.listen(port, () => {
     console.log('Berhasil Running di ' + port);
     
