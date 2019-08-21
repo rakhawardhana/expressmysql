@@ -71,18 +71,23 @@ const upstore = multer(
 //         res.send(result)
 //     })
 // })
+// router.get('/users', (req, res) => {
+    
+// })
 
+
+// Register 
 router.post('/users', (req, res) => {
 
     // tanda tanya akan di ganti oleh variabel data
     const sql = `INSERT INTO users SET ?`
-    const sql2 = `SELECT id, name, email, verified FROM users WHERE id = ?`
+    const sql2 = `SELECT id, username, full_name, usia FROM users WHERE id = ?`
     const data = req.body
     // const sql itu query
 
-    if(!isEmail(data.email)){
-        return res.send('Email is not valid')
-    }
+    // if(!isEmail(data.email)){
+    //     return res.send('Email is not valid')
+    // }
 
     data.password = bcrypt.hashSync(data.password, 8)
 
@@ -104,13 +109,36 @@ router.post('/users', (req, res) => {
 
 // module.exports = router
 
+//login
+router.post('/users/login', (req, res) => {
+    const sql = `SELECT * FROM users WHERE username = '${req.body.username}'`
+    const data = req.body
+
+    if (data.username == '' || data.password == '') {
+        return res.send(`Invalid, please insert username and password`)
+    } else {
+        conn.query(sql, (err, result) => {
+            if (err) return res.send(err)
+            if (!result) return res.send(`Invalid, cant found data, please register`)
+            if (result.length < 1) {
+                return res.send(`Invalid, username or password are incorrect`)
+            } else {
+                bcrypt.compare(data.password, result[0].password)
+                    .then(val => {
+                        if (val === false) return res.send(`Invalid, username or password are incorrect`)
+                        res.send(result[0])
+                    })
+            }
+        })
+    }
+})
 
 // UPLOAD AVATAR
 router.post('/users/avatar', upstore.single('apatar'), (req, res) => {
     const sql = `SELECT * FROM users WHERE username = ?`
     const sql2 = `UPDATE users SET avatar = '${req.file.filename}'
-                    WHERE username = '${req.body.uname}'`
-    const data = req.body.uname
+                    WHERE username = '${req.body.username}'`
+    const data = req.body.username
 
     conn.query(sql, data, (err, result) => {
         if(err) return res.send(err)

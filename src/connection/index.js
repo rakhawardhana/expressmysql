@@ -2,10 +2,10 @@ const mysql = require('mysql')
 
 const conn = mysql.createConnection(
     {
-        user: 'rakha96',
+        user: 'userbersama',
         password: 'Mysql123',
-        host: 'db4free.net',
-        database: 'rakha96',
+        host: 'localhost',
+        database: 'dnatechnology',
         port : 3306
     }
 )
